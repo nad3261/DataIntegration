@@ -1,0 +1,13 @@
+version: '3'
+services:
+  spark:
+    build: .
+    container_name: spark_container
+    volumes:
+      - ./app:/app
+    networks:
+      - hadoop-net
+
+networks:
+  hadoop-net:
+    driver: bridge

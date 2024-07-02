@@ -1,0 +1,25 @@
+
+FROM openjdk:8-jdk-alpine
+
+
+ENV HADOOP_VERSION=3.2.1
+ENV SPARK_VERSION=3.1.2
+ENV HADOOP_HOME=/usr/local/hadoop
+ENV SPARK_HOME=/usr/local/spark
+ENV PATH=$PATH:$HADOOP_HOME/bin:$SPARK_HOME/bin
+
+
+RUN apk update && apk add --no-cache wget bash && \
+    wget -qO- https://downloads.apache.org/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz | tar xvz -C /usr/local/ && \
+    wget -qO- https://downloads.apache.org/spark/spark-$SPARK_VERSION/spark-$SPARK_VERSION-bin-hadoop3.2.tgz | tar xvz -C /usr/local/ && \
+    mv /usr/local/hadoop-$HADOOP_VERSION $HADOOP_HOME && \
+    mv /usr/local/spark-$SPARK_VERSION-bin-hadoop3.2 $SPARK_HOME
+
+
+COPY beer_ratings_lr.py /app/beer_ratings_lr.py
+
+
+WORKDIR /app
+
+
+CMD ["spark-submit", "--master", "local", "beer_ratings_lr.py"]
